@@ -99,7 +99,7 @@
    var ok=document.querySelector('.okbox');ok.classList.add('on');
    ok.querySelector('[data-v=ev]').textContent=st.s+' · '+pet;
    ok.querySelector('[data-v=evd]').textContent=fdate(st.d)+' · '+st.t+' ('+st.dur+' min)';
-   if(API){var a=ok.querySelector('a[href^="clientes"]');if(a)a.remove();var p=ok.querySelector('.lead');if(p)p.textContent='Te hemos guardado el hueco. Si dejaste tu email, te llegará la confirmación y un recordatorio el día antes.'}
+   if(API){var a=ok.querySelector('a[href^="clientes"]');if(a)a.remove();var g=ok.querySelector('.gcal small');var p=ok.querySelector('.lead');if(p)p.textContent='Te hemos guardado el hueco. Si dejaste tu email, te llegará la confirmación y un recordatorio el día antes.'}
    window.scrollTo({top:0,behavior:'smooth'})}
   cbtn.addEventListener('click',function(){
    if(API){cbtn.disabled=true;var lbl=cbtn.innerHTML;cbtn.textContent='Reservando…';
