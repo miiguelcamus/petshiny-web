@@ -42,6 +42,8 @@ var CITA_COLS = ['id','fecha','hora','duracion','servicio','clienteId','mascota'
 // ============ INSTALACIÓN ============
 function instalar() {
   var p = PropertiesService.getScriptProperties();
+  try { if (p.getProperty('SHEET_ID')) SpreadsheetApp.openById(p.getProperty('SHEET_ID')); } catch (e) { p.deleteProperty('SHEET_ID'); }
+  try { if (p.getProperty('FOLDER_ID')) DriveApp.getFolderById(p.getProperty('FOLDER_ID')).getName(); } catch (e) { p.deleteProperty('FOLDER_ID'); }
   if (!p.getProperty('SHEET_ID')) {
     var ss = SpreadsheetApp.create('Panel · ' + DEFAULTS.negocio + ' (datos)');
     var c = ss.getSheets()[0]; c.setName('Clientes'); c.appendRow(CLI_COLS); c.setFrozenRows(1);
