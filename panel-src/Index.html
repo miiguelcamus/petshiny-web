@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="es"><head><base target="_top"><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1e1b3a;--mut:#6c6888;--bg:#f7f4fb;--line:#e6e0f0;--vio:#7a5cff;--vio2:#ece6ff;--sun:#ffc94d;--ok:#2fbf6a;--bad:#e5484d}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15.5px;line-height:1.5;padding-bottom:84px}
+h1,h2,h3{font-family:"Bricolage Grotesque",sans-serif;letter-spacing:-.01em;line-height:1.1}
+button,input,select,textarea{font:inherit;color:inherit}
+.top{background:var(--ink);color:#fff;padding:18px 20px 22px}
+.top small{color:#b9b4d6;font-size:13px}.top h1{font-size:24px;margin-top:2px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.kpi{background:rgba(255,255,255,.08);border-radius:14px;padding:10px 12px}.kpi b{display:block;font-family:"Bricolage Grotesque";font-size:24px}.kpi span{font-size:12px;color:#c9c4e6}
+.wrap{max-width:980px;margin:0 auto;padding:18px 16px}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);z-index:20}
+.tabs button{border:0;background:none;padding:10px 0 12px;font-size:12.5px;font-weight:600;color:var(--mut);cursor:pointer;display:grid;justify-items:center;gap:3px}
+.tabs button svg{width:22px;height:22px}
+.tabs button.on{color:var(--vio)}
+@media(min-width:800px){body{padding-bottom:0}.tabs{position:sticky;top:0;bottom:auto;border:0;border-bottom:1px solid var(--line);grid-template-columns:repeat(3,170px);justify-content:center}.tabs button{display:flex;justify-content:center;align-items:center;gap:8px;padding:14px 0;font-size:14.5px}}
+.view{display:none}.view.on{display:block}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:14px}
+.btn{text-decoration:none;border:0;border-radius:99px;padding:11px 18px;font-weight:600;cursor:pointer;background:var(--ink);color:#fff;display:inline-flex;gap:8px;align-items:center;transition:.2s}
+.btn:hover{transform:translateY(-1px)}.btn.lt{background:var(--vio2);color:var(--vio)}.btn.gh{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.ok{background:var(--ok)}.btn.bad{background:#fff;color:var(--bad);box-shadow:inset 0 0 0 1.5px #f3c4c5}.btn.sm{padding:7px 12px;font-size:13.5px}
+.btn:disabled{opacity:.5}
+.search{flex:1;min-width:200px;border:1.5px solid var(--line);border-radius:99px;padding:11px 16px;background:#fff}
+.search:focus,.f input:focus,.f select:focus,.f textarea:focus{outline:0;border-color:var(--vio)}
+h2.sec{font-size:20px;margin:18px 0 10px}
+.day{font-size:13px;font-weight:700;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:18px 0 8px}
+.cita{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;grid-template-columns:62px 1fr;gap:12px;margin-bottom:8px}
+.cita .h{font-family:"Bricolage Grotesque";font-size:20px;font-weight:800}.cita .h small{display:block;font-family:"DM Sans";font-size:12px;color:var(--mut);font-weight:500}
+.cita b{display:block}.cita p{color:var(--mut);font-size:14px}
+.cita .acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.st{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--vio2);color:var(--vio);margin-left:6px;vertical-align:2px}
+.st.hecha{background:#dcf5e6;color:#1d8a4b}.st.cancelada{background:#fde4e4;color:var(--bad)}
+.empty{color:var(--mut);padding:18px;text-align:center;background:#fff;border:1px dashed var(--line);border-radius:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px}
+.pc{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;text-align:left;padding:0;transition:.25s}
+.pc:hover{transform:translateY(-3px);box-shadow:0 18px 34px -24px rgba(30,27,58,.5)}
+.ph{aspect-ratio:4/3;background:linear-gradient(135deg,var(--vio2),#fff3d1);display:grid;place-items:center;color:var(--vio);font-size:42px;font-family:"Bricolage Grotesque";font-weight:800;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover}
+.pc .b{padding:12px 14px}.pc h3{font-size:17px}.pc p{color:var(--mut);font-size:13.5px}
+.modal{position:fixed;inset:0;background:rgba(30,27,58,.5);display:none;align-items:flex-end;justify-content:center;z-index:40}
+.modal.on{display:flex}
+.mb{background:var(--bg);width:min(640px,100%);max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px}
+@media(min-width:700px){.modal{align-items:center}.mb{border-radius:22px}}
+.mh{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.mh h2{font-size:22px}
+.x{border:0;background:#fff;width:38px;height:38px;border-radius:50%;font-size:20px;cursor:pointer}
+.f{display:grid;gap:12px}
+.f label{display:grid;gap:5px;font-weight:600;font-size:14px}
+.f input,.f select,.f textarea{border:1.5px solid var(--line);border-radius:12px;padding:11px 12px;background:#fff;font-weight:400;width:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.up{display:flex;gap:12px;align-items:center}.up .pv{width:76px;height:76px;border-radius:14px;overflow:hidden;background:var(--vio2);display:grid;place-items:center;color:var(--vio);flex:none}
+.up .pv img{width:100%;height:100%;object-fit:cover}.up input{display:none}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.kv div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:9px 11px}.kv small{display:block;color:var(--mut);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em}
+.hist li{list-style:none;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.notes{white-space:pre-wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;margin-bottom:12px}
+.card h3{font-size:17px;margin-bottom:10px}
+.hrow{display:grid;grid-template-columns:92px 1fr 1fr 70px;gap:8px;align-items:center;margin-bottom:6px;font-size:14px}
+.hrow input[type=time]{padding:8px}
+.srow{display:grid;grid-template-columns:1fr 90px 36px;gap:8px;margin-bottom:6px}
+.sw{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+.sw:last-child{border:0}
+.tg{appearance:none;width:44px;height:26px;border-radius:99px;background:#d9d4e6;position:relative;cursor:pointer;transition:.2s;flex:none}
+.tg:after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+.tg:checked{background:var(--vio)}.tg:checked:after{left:21px}
+.hint{font-size:12.5px;color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:11px 18px;border-radius:99px;opacity:0;transition:.3s;z-index:60;font-size:14px}
+.toast.on{opacity:1;transform:translateX(-50%)}
+.load{position:fixed;inset:0;background:var(--bg);display:grid;place-items:center;z-index:70;font-weight:600;color:var(--mut)}
+</style></head><body>
+<div class="load" id="load">Cargando tu panel…</div>
+<header class="top"><small id="fecha"></small><h1 id="neg">Panel</h1>
+ <div class="kpis"><div class="kpi"><b id="k1">0</b><span>citas hoy</span></div><div class="kpi"><b id="k2">0</b><span>esta semana</span></div><div class="kpi"><b id="k3">0</b><span>clientes</span></div></div></header>
+<nav class="tabs">
+ <button data-v="citas" class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16v14H4zM4 10h16M8 3v4M16 3v4"/></svg>Citas</button>
+ <button data-v="clientes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-6 7-6s7 2 7 6M17 11a3 3 0 1 0 0-6M22 21c0-3-2-5-5-5.5"/></svg>Clientes</button>
+ <button data-v="ajustes"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-2.8 1.2V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 7 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.7 1.7 0 0 0 1.2 14H1a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 2.6 7a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1A1.7 1.7 0 0 0 7 2.6 1.7 1.7 0 0 0 8 1.1V1a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 2.8 1.2l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1A1.7 1.7 0 0 0 19.4 7"/></svg>Ajustes</button>
+</nav>
+<main class="wrap">
+ <section class="view on" id="v-citas">
+  <div class="row"><button class="btn" id="nuevaCita">+ Nueva cita</button><button class="btn gh" id="recargar">Actualizar</button></div>
+  <div id="listaCitas"></div>
+ </section>
+ <section class="view" id="v-clientes">
+  <div class="row"><input class="search" id="q" placeholder="Buscar mascota, propietario, raza o teléfono"><button class="btn" id="nuevoCli">+ Nuevo cliente</button></div>
+  <div class="grid" id="gridCli"></div>
+ </section>
+ <section class="view" id="v-ajustes"><div id="aj"></div></section>
+</main>
+<div class="modal" id="modal"><div class="mb" id="mb"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+var D=null,FOTOS={},DN=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'],DNS=['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+function $(s,r){return (r||document).querySelector(s)}function $$(s,r){return [].slice.call((r||document).querySelectorAll(s))}
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function toast(t){var e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(function(){e.classList.remove('on')},2400)}
+function run(fn,args,ok){var r=google.script.run.withSuccessHandler(ok).withFailureHandler(function(e){toast('Error: '+(e.message||e))});r[fn].apply(r,args||[])}
+function d2(s){var p=s.split('-');return new Date(+p[0],p[1]-1,+p[2])}
+function fdia(s){var d=d2(s);return DN[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1)}
+function ini(n){return String(n||'?').trim().charAt(0).toUpperCase()}
+function waLink(tel,txt){tel=String(tel||'').replace(/\D/g,'');if(tel.length===9)tel='34'+tel;return 'https://wa.me/'+tel+(txt?'?text='+encodeURIComponent(txt):'')}
+
+function load(){run('panelDatos',[],function(d){D=d;$('#load').style.display='none';render()})}
+function render(){
+ $('#neg').textContent=D.cfg.negocio;var hoy=d2(D.hoy);$('#fecha').textContent=DN[hoy.getDay()]+', '+hoy.getDate()+'/'+(hoy.getMonth()+1)+'/'+hoy.getFullYear();
+ var act=D.citas.filter(function(c){return c.estado!=='cancelada'});
+ var fin=new Date(hoy);fin.setDate(fin.getDate()+7);
+ $('#k1').textContent=act.filter(function(c){return c.fecha===D.hoy}).length;
+ $('#k2').textContent=act.filter(function(c){var d=d2(c.fecha);return d>=hoy&&d<fin}).length;
+ $('#k3').textContent=D.clientes.length;
+ renderCitas();renderClientes();renderAjustes()}
+
+// ---------- citas ----------
+function renderCitas(){
+ var prox=D.citas.filter(function(c){return c.fecha>=D.hoy}).sort(function(a,b){return (a.fecha+a.hora)<(b.fecha+b.hora)?-1:1});
+ if(!prox.length){$('#listaCitas').innerHTML='<p class="empty">No hay citas próximas. Las reservas de la web aparecerán aquí solas.</p>';return}
+ var h='',last='';
+ prox.forEach(function(c){if(c.fecha!==last){last=c.fecha;h+='<p class="day">'+(c.fecha===D.hoy?'Hoy · ':'')+fdia(c.fecha)+'</p>'}
+  h+='<div class="cita"><div class="h">'+esc(c.hora)+'<small>'+esc(c.duracion)+' min</small></div><div><b>'+esc(c.mascota)+'<span class="st '+esc(c.estado)+'">'+esc(c.estado)+'</span></b><p>'+esc(c.servicio)+' · '+esc(c.propietario)+' · '+esc(c.telefono)+(c.origen==='web'?' · reservada en la web':'')+'</p>'+
+  (c.estado==='reservada'?'<div class="acts"><button class="btn ok sm" data-hecha="'+c.id+'">Hecha</button><a class="btn lt sm" target="_blank" href="'+waLink(c.telefono)+'">WhatsApp</a><button class="btn gh sm" data-ficha="'+c.clienteId+'">Ficha</button><button class="btn bad sm" data-cancel="'+c.id+'">Cancelar</button></div>':'')+'</div></div>'});
+ $('#listaCitas').innerHTML=h;
+ $$('[data-hecha]').forEach(function(b){b.onclick=function(){var nota=prompt('¿Alguna nota de esta visita para la ficha? (opcional)')||'';b.disabled=true;run('panelEstadoCita',[b.dataset.hecha,'hecha',nota],function(){toast('Visita guardada en la ficha');load()})}});
+ $$('[data-cancel]').forEach(function(b){b.onclick=function(){if(!confirm('¿Cancelar esta cita? Se quitará también del calendario.'))return;run('panelEstadoCita',[b.dataset.cancel,'cancelada',''],function(){toast('Cita cancelada');load()})}});
+ $$('[data-ficha]').forEach(function(b){b.onclick=function(){ficha(b.dataset.ficha)}})}
+$('#nuevaCita').onclick=function(){
+ if(!D.clientes.length){toast('Primero crea un cliente');return}
+ var opts=D.clientes.slice().sort(function(a,b){return a.mascota>b.mascota?1:-1}).map(function(c){return '<option value="'+c.id+'">'+esc(c.mascota)+' · '+esc(c.propietario)+'</option>'}).join('');
+ var sv=D.cfg.servicios.map(function(s){return '<option>'+esc(s.n)+'</option>'}).join('');
+ modal('<div class="mh"><h2>Nueva cita</h2><button class="x" data-close>×</button></div><form class="f" id="fc"><label>Cliente<select name="clienteId">'+opts+'</select></label><label>Servicio<select name="servicio">'+sv+'</select></label><div class="two"><label>Día<input type="date" name="fecha" value="'+D.hoy+'" required></label><label>Hora<input type="time" name="hora" value="10:00" step="900" required></label></div><label>Nota (opcional)<input name="nota"></label><button class="btn">Guardar y añadir al calendario</button></form>');
+ $('#fc').onsubmit=function(e){e.preventDefault();var f=e.target;f.querySelector('button').disabled=true;run('panelNuevaCita',[{clienteId:f.clienteId.value,servicio:f.servicio.value,fecha:f.fecha.value,hora:f.hora.value,nota:f.nota.value}],function(){closeM();toast('Cita creada');load()})}};
+$('#recargar').onclick=function(){load();toast('Actualizado')};
+
+// ---------- clientes ----------
+function foto(c,el){if(!c.fotoId)return;if(FOTOS[c.fotoId]){el.innerHTML='<img alt="" src="'+FOTOS[c.fotoId]+'">';return}
+ run('panelFoto',[c.fotoId],function(u){if(u){FOTOS[c.fotoId]=u;el.innerHTML='<img alt="" src="'+u+'">'}})}
+function renderClientes(){
+ var q=($('#q').value||'').toLowerCase();
+ var l=D.clientes.filter(function(c){return !q||[c.mascota,c.propietario,c.raza,c.telefono].join(' ').toLowerCase().indexOf(q)>-1}).sort(function(a,b){return String(a.mascota).localeCompare(b.mascota)});
+ if(!l.length){$('#gridCli').innerHTML='<p class="empty" style="grid-column:1/-1">'+(q?'No hay resultados.':'Aún no hay clientes. Se crean solos cuando reservan en la web, o añádelos tú.')+'</p>';return}
+ $('#gridCli').innerHTML=l.map(function(c){return '<button class="pc" data-id="'+c.id+'"><div class="ph">'+ini(c.mascota)+'</div><div class="b"><h3>'+esc(c.mascota)+'</h3><p>'+esc(c.raza||c.tipo)+' · '+esc(c.propietario)+'</p><p>'+(c.ultimaVisita?'Última visita: '+fdia(c.ultimaVisita):'Sin visitas aún')+'</p></div></button>'}).join('');
+ $$('.pc').forEach(function(b){var c=D.clientes.filter(function(x){return x.id==b.dataset.id})[0];foto(c,$('.ph',b));b.onclick=function(){ficha(c.id)}})}
+$('#q').oninput=renderClientes;
+function ficha(id){var c=D.clientes.filter(function(x){return x.id==id})[0];if(!c)return;
+ var cs=D.citas.filter(function(x){return x.clienteId==id}).sort(function(a,b){return a.fecha<b.fecha?1:-1});
+ modal('<div class="mh"><h2>'+esc(c.mascota)+'</h2><button class="x" data-close>×</button></div><div class="ph" id="fph" style="border-radius:16px;aspect-ratio:16/9">'+ini(c.mascota)+'</div>'+
+ '<div class="kv"><div><small>Tipo / raza</small>'+esc(c.tipo)+' · '+esc(c.raza||'-')+'</div><div><small>Pelo</small>'+esc(c.pelo||'-')+'</div><div><small>Propietario</small>'+esc(c.propietario)+'</div><div><small>Teléfono</small>'+esc(c.telefono)+'</div><div><small>Email</small>'+esc(c.email||'-')+'</div><div><small>Visitas</small>'+(c.visitas||0)+'</div></div>'+
+ '<p class="day" style="margin-top:6px">Notas</p><div class="notes">'+esc(c.notas||'Sin notas.')+'</div>'+
+ '<p class="day">Historial de citas</p><ul class="hist">'+(cs.length?cs.map(function(x){return '<li><b>'+fdia(x.fecha)+' '+esc(x.hora)+'</b> · '+esc(x.servicio)+' <span class="st '+esc(x.estado)+'">'+esc(x.estado)+'</span></li>'}).join(''):'<li>Sin citas todavía.</li>')+'</ul>'+
+ '<div class="row" style="margin-top:14px"><a class="btn lt" target="_blank" href="'+waLink(c.telefono)+'">WhatsApp</a><button class="btn" id="edit">Editar</button><button class="btn bad" id="del">Borrar</button></div>');
+ foto(c,$('#fph'));$('#edit').onclick=function(){editar(c)};
+ $('#del').onclick=function(){if(!confirm('¿Borrar la ficha de '+c.mascota+'? Esta acción no se puede deshacer.'))return;run('panelBorrarCliente',[c.id],function(){closeM();toast('Ficha borrada');load()})}}
+function editar(c){c=c||{};var tipos=(D.cfg.tipos||['perro','gato']).map(function(t){return '<option'+(c.tipo===t?' selected':'')+'>'+t+'</option>'}).join('');
+ var pel=['sin nudos','con algunos nudos','con muchos nudos'].map(function(t){return '<option'+(c.pelo===t?' selected':'')+'>'+t+'</option>'}).join('');
+ modal('<div class="mh"><h2>'+(c.id?'Editar ficha':'Nuevo cliente')+'</h2><button class="x" data-close>×</button></div><form class="f" id="fe">'+
+ '<div class="up"><div class="pv" id="pv">📷</div><label class="btn gh">Subir foto<input type="file" accept="image/*" id="ff"></label></div>'+
+ '<div class="two"><label>Mascota<input name="mascota" required value="'+esc(c.mascota)+'"></label><label>Tipo<select name="tipo">'+tipos+'</select></label></div>'+
+ '<div class="two"><label>Raza<input name="raza" value="'+esc(c.raza)+'"></label><label>Pelo<select name="pelo">'+pel+'</select></label></div>'+
+ '<div class="two"><label>Propietario<input name="propietario" required value="'+esc(c.propietario)+'"></label><label>Teléfono<input name="telefono" type="tel" value="'+esc(c.telefono)+'"></label></div>'+
+ '<label>Email (para recordatorios)<input name="email" type="email" value="'+esc(c.email)+'"></label>'+
+ '<label>Notas<textarea name="notas" rows="4">'+esc(c.notas)+'</textarea></label><button class="btn">Guardar ficha</button></form>');
+ if(c.fotoId)foto(c,$('#pv'));var b64=null;
+ $('#ff').onchange=function(){var fl=this.files[0];if(!fl)return;var img=new Image(),r=new FileReader();r.onload=function(){img.onload=function(){var s=Math.min(1,1000/Math.max(img.width,img.height)),cv=document.createElement('canvas');cv.width=img.width*s;cv.height=img.height*s;cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);b64=cv.toDataURL('image/jpeg',.82);$('#pv').innerHTML='<img alt="" src="'+b64+'">'};img.src=r.result};r.readAsDataURL(fl)};
+ $('#fe').onsubmit=function(e){e.preventDefault();var f=e.target,o={id:c.id};['mascota','tipo','raza','pelo','propietario','telefono','email','notas'].forEach(function(k){o[k]=f[k].value.trim()});if(b64)o.fotoBase64=b64;
+  f.querySelector('button.btn:last-child').disabled=true;run('panelGuardarCliente',[o],function(){closeM();toast('Ficha guardada');load()})}}
+$('#nuevoCli').onclick=function(){editar(null)};
+
+// ---------- ajustes ----------
+function renderAjustes(){var c=D.cfg;
+ var hr=DNS.map(function(n,i){var h=c.horario[i];return '<div class="hrow"><span>'+n+'</span><input type="time" data-h="'+i+'" data-k="0" value="'+(h?h[0]:'09:00')+'"'+(h?'':' disabled')+'><input type="time" data-h="'+i+'" data-k="1" value="'+(h?h[1]:'14:00')+'"'+(h?'':' disabled')+'><label class="hint"><input type="checkbox" data-cl="'+i+'"'+(h?'':' checked')+'> cerrado</label></div>'}).join('');
+ var sv=c.servicios.map(function(s,i){return '<div class="srow"><input value="'+esc(s.n)+'" data-sn="'+i+'"><input type="number" min="15" step="15" value="'+s.m+'" data-sm="'+i+'"><button class="btn gh sm" data-sd="'+i+'">×</button></div>'}).join('');
+ var vac=(c.vacaciones||[]).map(function(v,i){return '<div class="srow"><input type="date" value="'+v.desde+'" data-vd="'+i+'"><input type="date" value="'+(v.hasta||v.desde)+'" data-vh="'+i+'"><button class="btn gh sm" data-vx="'+i+'">×</button></div>'}).join('');
+ function tg(k,t,d){return '<div class="sw"><div><b>'+t+'</b><div class="hint">'+d+'</div></div><input class="tg" type="checkbox" data-tg="'+k+'"'+(c[k]?' checked':'')+'></div>'}
+ $('#aj').innerHTML='<div class="card"><h3>Horario de reservas</h3>'+hr+'<p class="hint">Las reservas de la web solo ofrecen horas dentro de este horario y libres en tu Google Calendar.</p></div>'+
+ '<div class="card"><h3>Vacaciones y días cerrados</h3>'+(vac||'<p class="hint">Ninguno.</p>')+'<button class="btn lt sm" id="addV">+ Añadir fechas</button></div>'+
+ '<div class="card"><h3>Servicios y duración (min)</h3>'+sv+'<button class="btn lt sm" id="addS">+ Añadir servicio</button></div>'+
+ '<div class="card"><h3>Automatizaciones</h3>'+tg('recordatorio','Recordatorio de cita','El día antes, por email y con botón de WhatsApp en tu resumen.')+tg('pedirResena','Pedir reseña en Google','El día después de la cita.')+tg('volver','Te toca volver','Aviso a clientes que llevan tiempo sin venir.')+tg('resumenDiario','Resumen diario a las 9:00','Tus citas del día y los mensajes listos para enviar.')+
+ '<label class="f" style="margin-top:10px"><span style="font-weight:600;font-size:14px">Avisar de volver tras (semanas)</span><input type="number" min="2" max="52" id="vs" value="'+(c.volverSemanas||7)+'"></label></div>'+
+ '<div class="card f"><h3>Textos de los mensajes</h3><p class="hint">Puedes usar {propietario}, {mascota}, {fecha}, {hora}, {servicio}, {negocio}, {direccion}, {telefono}, {web}, {resenas}.</p><label>Recordatorio<textarea rows="3" id="t1">'+esc(c.txtRecordatorio)+'</textarea></label><label>Te toca volver<textarea rows="3" id="t2">'+esc(c.txtVolver)+'</textarea></label><label>Pedir reseña<textarea rows="3" id="t3">'+esc(c.txtResena)+'</textarea></label></div>'+
+ '<div class="row"><button class="btn" id="saveA">Guardar ajustes</button><button class="btn gh" id="probar">Probar automatizaciones ahora</button><a class="btn gh" target="_blank" href="'+D.sheetUrl+'">Ver hoja de datos</a></div>';
+ $$('[data-cl]').forEach(function(x){x.onchange=function(){$$('[data-h="'+x.dataset.cl+'"]').forEach(function(t){t.disabled=x.checked})}});
+ $('#addS').onclick=function(){c.servicios.push({n:'Nuevo servicio',m:60});collect();renderAjustes()};
+ $('#addV').onclick=function(){c.vacaciones=c.vacaciones||[];c.vacaciones.push({desde:D.hoy,hasta:D.hoy});collect();renderAjustes()};
+ $$('[data-sd]').forEach(function(b){b.onclick=function(){collect();c.servicios.splice(+b.dataset.sd,1);renderAjustes()}});
+ $$('[data-vx]').forEach(function(b){b.onclick=function(){collect();c.vacaciones.splice(+b.dataset.vx,1);renderAjustes()}});
+ $('#saveA').onclick=function(){collect();this.disabled=true;run('panelGuardarAjustes',[c],function(n){D.cfg=n;toast('Ajustes guardados');renderAjustes()})};
+ $('#probar').onclick=function(){if(!confirm('Se enviarán ahora los recordatorios, reseñas y avisos pendientes, y te llegará el resumen por email. ¿Continuar?'))return;run('panelProbarTarea',[],function(l){toast('Hecho: '+l.recordatorios+' recordatorios, '+l.resenas+' reseñas, '+l.volver+' avisos');load()})}}
+function collect(){var c=D.cfg;
+ c.horario=DNS.map(function(_,i){var cl=$('[data-cl="'+i+'"]');if(cl&&cl.checked)return null;var a=$('[data-h="'+i+'"][data-k="0"]'),b=$('[data-h="'+i+'"][data-k="1"]');return [a.value,b.value]});
+ c.servicios=$$('[data-sn]').map(function(x){var i=x.dataset.sn;return {n:x.value.trim(),m:+$('[data-sm="'+i+'"]').value||60}}).filter(function(s){return s.n});
+ c.vacaciones=$$('[data-vd]').map(function(x){var i=x.dataset.vd;return {desde:x.value,hasta:$('[data-vh="'+i+'"]').value||x.value}}).filter(function(v){return v.desde});
+ $$('[data-tg]').forEach(function(t){c[t.dataset.tg]=t.checked});
+ c.volverSemanas=+$('#vs').value||7;c.txtRecordatorio=$('#t1').value;c.txtVolver=$('#t2').value;c.txtResena=$('#t3').value}
+
+// ---------- modal / tabs ----------
+function modal(h){$('#mb').innerHTML=h;$('#modal').classList.add('on');$$('[data-close]').forEach(function(b){b.onclick=closeM})}
+function closeM(){$('#modal').classList.remove('on')}
+$('#modal').onclick=function(e){if(e.target.id==='modal')closeM()};
+$$('.tabs button').forEach(function(b){b.onclick=function(){$$('.tabs button').forEach(function(x){x.classList.toggle('on',x===b)});$$('.view').forEach(function(v){v.classList.toggle('on',v.id==='v-'+b.dataset.v)});window.scrollTo(0,0)}});
+load();
+</script></body></html>

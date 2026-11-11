@@ -61,7 +61,16 @@
    b.addEventListener('click',function(){days.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});st.d=d;st.t=null;renderSlots();sum()});
    days.appendChild(b)})(i)}
   function seed(n){var x=Math.sin(n)*10000;return x-Math.floor(x)}
+  var API=window.PS_API||'';
+  function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+  function slotBtn(t){var b=document.createElement('button');b.type='button';b.textContent=t;
+   b.addEventListener('click',function(){slots.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});st.t=t;sum()});return b}
   function renderSlots(){slots.innerHTML='';
+   if(API&&st.d&&st.s){var req=ymd(st.d)+st.dur;slots.innerHTML='<p class="empty">Buscando huecos libres…</p>';
+    fetch(API+'?api=slots&fecha='+ymd(st.d)+'&dur='+st.dur).then(function(r){return r.json()}).then(function(j){
+     if(req!==ymd(st.d)+st.dur)return;slots.innerHTML='';(j.slots||[]).forEach(function(t){slots.appendChild(slotBtn(t))});
+     if(!(j.slots||[]).length)slots.innerHTML='<p class="empty">No quedan huecos este día. Prueba otro.</p>'})
+    .catch(function(){slots.innerHTML='<p class="empty">No se han podido cargar los huecos. Inténtalo de nuevo o escríbenos por WhatsApp.</p>'});return}
    if(!st.d){slots.innerHTML='<p class="empty">Elige un día para ver los huecos libres.</p>';return}
    if(!st.s){slots.innerHTML='<p class="empty">Elige primero un servicio.</p>';return}
    var h=H[(st.d.getDay()+6)%7],a=mins(h[0]),z=mins(h[1]),now=new Date(),key=st.d.getDate()*7+st.d.getMonth();
@@ -76,7 +85,7 @@
   renderSlots();
   var fm=bk.querySelector('.bdata'),cbtn=document.querySelector('.sum .btn');
   var up=fm.querySelector('input[type=file]'),pv=fm.querySelector('.pv');
-  up.addEventListener('change',function(){var fl=up.files[0];if(!fl)return;var r=new FileReader();r.onload=function(){st.photo=r.result;pv.innerHTML='<img alt="Foto de la mascota" src="'+r.result+'">'};r.readAsDataURL(fl)});
+  up.addEventListener('change',function(){var fl=up.files[0];if(!fl)return;var r=new FileReader();r.onload=function(){var img=new Image();img.onload=function(){var k=Math.min(1,1000/Math.max(img.width,img.height)),cv=document.createElement('canvas');cv.width=img.width*k;cv.height=img.height*k;cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);st.photo=cv.toDataURL('image/jpeg',.82);pv.innerHTML='<img alt="Foto de la mascota" src="'+st.photo+'">'};img.src=r.result};r.readAsDataURL(fl)});
   fm.addEventListener('input',sum);fm.addEventListener('change',sum);
   function sum(){
    var S=document.querySelector('.sum');
@@ -86,7 +95,18 @@
    cbtn.disabled=!(st.s&&st.d&&st.t&&pn&&fm.on.value.trim()&&fm.ph.value.trim())}
   sum();
   if(q){var m=[].slice.call(sbtn).reverse().find(function(b){return q.toLowerCase().indexOf(b.dataset.k)>-1});if(m)pickS(m)}
+  function done(pet){document.querySelector('.bflow').style.display='none';
+   var ok=document.querySelector('.okbox');ok.classList.add('on');
+   ok.querySelector('[data-v=ev]').textContent=st.s+' · '+pet;
+   ok.querySelector('[data-v=evd]').textContent=fdate(st.d)+' · '+st.t+' ('+st.dur+' min)';
+   if(API){var a=ok.querySelector('a[href^="clientes"]');if(a)a.remove();var p=ok.querySelector('.lead');if(p)p.textContent='Te hemos guardado el hueco. Si dejaste tu email, te llegará la confirmación y un recordatorio el día antes.'}
+   window.scrollTo({top:0,behavior:'smooth'})}
   cbtn.addEventListener('click',function(){
+   if(API){cbtn.disabled=true;var lbl=cbtn.innerHTML;cbtn.textContent='Reservando…';
+    var body={api:'reservar',servicio:st.s,fecha:ymd(st.d),hora:st.t,tipo:fm.querySelector('[name=ta]:checked').value,mascota:fm.pn.value.trim(),raza:fm.rz.value.trim(),propietario:fm.on.value.trim(),telefono:fm.ph.value.trim(),email:fm.em?fm.em.value.trim():'',pelo:fm.querySelector('[name=pe]:checked').value,notas:fm.nt.value.trim(),foto:st.photo||''};
+    fetch(API,{method:'POST',body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(j){
+     if(j.ok)done(body.mascota);else{alert(j.error||'No se ha podido reservar');cbtn.innerHTML=lbl;cbtn.disabled=false;st.t=null;renderSlots();sum()}})
+    .catch(function(){alert('No se ha podido conectar. Inténtalo de nuevo o escríbenos por WhatsApp.');cbtn.innerHTML=lbl;cbtn.disabled=false});return}
    var tipo=fm.querySelector('[name=ta]:checked').value;
    var fic={id:Date.now(),pet:fm.pn.value.trim(),tipo:tipo,raza:fm.rz.value.trim(),owner:fm.on.value.trim(),tel:fm.ph.value.trim(),pelo:fm.querySelector('[name=pe]:checked').value,notas:fm.nt.value.trim(),photo:st.photo,visits:[{d:fdate(st.d)+' · '+st.t,s:st.s,n:'Reserva online'}]};
    var l=load();l.unshift(fic);save(l);
