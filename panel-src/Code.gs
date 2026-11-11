@@ -238,6 +238,12 @@ function panelEstadoCita(id, estado, nota) {
   }
   return true;
 }
+function panelBorrarCanceladas() {
+  soloPropietario();
+  var sh = sheet('Citas'), v = sh.getDataRange().getValues(), col = CITA_COLS.indexOf('estado'), n = 0;
+  for (var i = v.length - 1; i >= 1; i--) if (v[i][col] === 'cancelada') { sh.deleteRow(i + 1); n++; }
+  return n;
+}
 function panelGuardarAjustes(c) { soloPropietario(); var cur = cfg(); Object.keys(c).forEach(function(k){ cur[k] = c[k]; }); saveCfg(cur); return cur; }
 function panelProbarTarea() { soloPropietario(); return tareaDiaria(); }
 

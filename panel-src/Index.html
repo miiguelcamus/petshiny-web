@@ -81,7 +81,7 @@ h2.sec{font-size:20px;margin:18px 0 10px}
 </nav>
 <main class="wrap">
  <section class="view on" id="v-citas">
-  <div class="row"><button class="btn" id="nuevaCita">+ Nueva cita</button><button class="btn gh" id="recargar">Actualizar</button></div>
+  <div class="row"><button class="btn" id="nuevaCita">+ Nueva cita</button><button class="btn gh" id="recargar">Actualizar</button><button class="btn bad" id="borrarCanc" style="display:none"></button></div>
   <div id="listaCitas"></div>
  </section>
  <section class="view" id="v-clientes">
@@ -116,7 +116,9 @@ function render(){
 
 // ---------- citas ----------
 function renderCitas(){
- var prox=D.citas.filter(function(c){return c.fecha>=D.hoy}).sort(function(a,b){return (a.fecha+a.hora)<(b.fecha+b.hora)?-1:1});
+ var canc=D.citas.filter(function(c){return c.estado==='cancelada'}).length,bc=$('#borrarCanc');
+ bc.style.display=canc?'':'none';bc.textContent='Eliminar canceladas ('+canc+')';
+ var prox=D.citas.filter(function(c){return c.fecha>=D.hoy&&c.estado!=='cancelada'}).sort(function(a,b){return (a.fecha+a.hora)<(b.fecha+b.hora)?-1:1});
  if(!prox.length){$('#listaCitas').innerHTML='<p class="empty">No hay citas próximas. Las reservas de la web aparecerán aquí solas.</p>';return}
  var h='',last='';
  prox.forEach(function(c){if(c.fecha!==last){last=c.fecha;h+='<p class="day">'+(c.fecha===D.hoy?'Hoy · ':'')+fdia(c.fecha)+'</p>'}
@@ -133,6 +135,7 @@ $('#nuevaCita').onclick=function(){
  modal('<div class="mh"><h2>Nueva cita</h2><button class="x" data-close>×</button></div><form class="f" id="fc"><label>Cliente<select name="clienteId">'+opts+'</select></label><label>Servicio<select name="servicio">'+sv+'</select></label><div class="two"><label>Día<input type="date" name="fecha" value="'+D.hoy+'" required></label><label>Hora<input type="time" name="hora" value="10:00" step="900" required></label></div><label>Nota (opcional)<input name="nota"></label><button class="btn">Guardar y añadir al calendario</button></form>');
  $('#fc').onsubmit=function(e){e.preventDefault();var f=e.target;f.querySelector('button').disabled=true;run('panelNuevaCita',[{clienteId:f.clienteId.value,servicio:f.servicio.value,fecha:f.fecha.value,hora:f.hora.value,nota:f.nota.value}],function(){closeM();toast('Cita creada');load()})}};
 $('#recargar').onclick=function(){load();toast('Actualizado')};
+$('#borrarCanc').onclick=function(){if(!confirm('¿Eliminar definitivamente todas las citas canceladas? No se puede deshacer.'))return;this.disabled=true;var b=this;run('panelBorrarCanceladas',[],function(n){b.disabled=false;toast(n+' citas canceladas eliminadas');load()})};
 
 // ---------- clientes ----------
 function foto(c,el){if(!c.fotoId)return;if(FOTOS[c.fotoId]){el.innerHTML='<img alt="" src="'+FOTOS[c.fotoId]+'">';return}
@@ -145,7 +148,7 @@ function renderClientes(){
  $$('.pc').forEach(function(b){var c=D.clientes.filter(function(x){return x.id==b.dataset.id})[0];foto(c,$('.ph',b));b.onclick=function(){ficha(c.id)}})}
 $('#q').oninput=renderClientes;
 function ficha(id){var c=D.clientes.filter(function(x){return x.id==id})[0];if(!c)return;
- var cs=D.citas.filter(function(x){return x.clienteId==id}).sort(function(a,b){return a.fecha<b.fecha?1:-1});
+ var cs=D.citas.filter(function(x){return x.clienteId==id&&x.estado!=='cancelada'}).sort(function(a,b){return a.fecha<b.fecha?1:-1});
  modal('<div class="mh"><h2>'+esc(c.mascota)+'</h2><button class="x" data-close>×</button></div><div class="ph" id="fph" style="border-radius:16px;aspect-ratio:16/9">'+ini(c.mascota)+'</div>'+
  '<div class="kv"><div><small>Tipo / raza</small>'+esc(c.tipo)+' · '+esc(c.raza||'-')+'</div><div><small>Pelo</small>'+esc(c.pelo||'-')+'</div><div><small>Propietario</small>'+esc(c.propietario)+'</div><div><small>Teléfono</small>'+esc(c.telefono)+'</div><div><small>Email</small>'+esc(c.email||'-')+'</div><div><small>Visitas</small>'+(c.visitas||0)+'</div></div>'+
  '<p class="day" style="margin-top:6px">Notas</p><div class="notes">'+esc(c.notas||'Sin notas.')+'</div>'+
