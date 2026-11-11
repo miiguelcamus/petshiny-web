@@ -238,6 +238,13 @@ function panelEstadoCita(id, estado, nota) {
   }
   return true;
 }
+function panelCancelarYBorrar(id) {
+  soloPropietario();
+  var cita = readAll('Citas', CITA_COLS).filter(function(x){ return x.id == id; })[0];
+  if (cita && cita.eventId) try { CalendarApp.getDefaultCalendar().getEventById(cita.eventId).deleteEvent(); } catch (e) {}
+  var r = rowIndex('Citas', id); if (r > 0) sheet('Citas').deleteRow(r);
+  return true;
+}
 function panelBorrarCanceladas() {
   soloPropietario();
   var sh = sheet('Citas'), v = sh.getDataRange().getValues(), col = CITA_COLS.indexOf('estado'), n = 0;
