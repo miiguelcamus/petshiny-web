@@ -354,3 +354,4 @@ a.rate:hover{background:#fff}
 @media(max-width:1000px){.ab,.fq{grid-template-columns:1fr;gap:36px}.abp{max-width:520px;aspect-ratio:4/3.6}}
 @media(max-width:640px){.revs{columns:1}.oq{font-size:18.5px;padding:18px 20px}.faq summary{font-size:17px;padding:18px}.faq details p{padding:0 18px 18px}.blob.pb{box-shadow:0 30px 60px -36px rgba(58,36,170,.6),0 0 0 7px #fff,0 0 0 9px var(--vio2)}}
 @media(prefers-reduced-motion:reduce){.blob.pb img{animation:none}}
+.hcta.on{box-shadow:0 0 0 3px #fff,0 0 0 5px var(--wa)}
