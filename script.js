@@ -59,7 +59,13 @@
    var b=document.createElement('button');b.type='button';b.innerHTML='<small>'+DN[d.getDay()]+'</small><b>'+d.getDate()+'</b><small>'+MN[d.getMonth()]+'</small>';
    if(!h||!h[0])b.disabled=true;
    b.addEventListener('click',function(){days.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)});st.d=d;st.t=null;renderSlots();sum()});
+   b.dataset.ymd=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);b.dataset.wd=(d.getDay()+6)%7;
    days.appendChild(b)})(i)}
+  if(window.PS_API)fetch(window.PS_API+'?api=config').then(function(r){return r.json()}).then(function(c){
+   var vac=c.vacaciones||[],hor=c.horario||H;
+   days.querySelectorAll('button').forEach(function(b){var y=b.dataset.ymd,h=hor[+b.dataset.wd];
+    var off=!h||!h[0]||vac.some(function(v){return y>=v.desde&&y<=(v.hasta||v.desde)});
+    b.disabled=off;b.title=off?'Cerrado':'';if(off&&b.classList.contains('on')){b.classList.remove('on');st.d=null;st.t=null;renderSlots();sum()}})}).catch(function(){});
   function seed(n){var x=Math.sin(n)*10000;return x-Math.floor(x)}
   var API=window.PS_API||'';
   function ymd(d){return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}

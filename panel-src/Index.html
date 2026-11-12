@@ -76,9 +76,11 @@ button,input,select,textarea{font:inherit;color:inherit}
 .card{border-radius:var(--r);padding:16px;margin-bottom:12px}
 .card h3{font-size:17px;margin-bottom:10px}
 .hrow{display:grid;grid-template-columns:92px 1fr 1fr 70px;gap:8px;align-items:center;margin-bottom:6px;font-size:14px}
-.hrow input[type=time]{padding:8px;border:1px solid rgba(109,77,255,.18);border-radius:10px;background:rgba(255,255,255,.75)}
+.hrow input[type=time]{min-width:0;width:100%;padding:8px;border:1px solid rgba(109,77,255,.18);border-radius:10px;background:rgba(255,255,255,.75)}
 .srow{display:grid;grid-template-columns:1fr 90px 36px;gap:8px;margin-bottom:6px}
-.srow input{border:1px solid rgba(109,77,255,.18);border-radius:10px;padding:8px 10px;background:rgba(255,255,255,.75)}
+.hrow .ds{display:none}.hrow .hint{white-space:nowrap;display:flex;gap:4px;align-items:center}@media(max-width:520px){.hrow .dl{display:none}.hrow .ds{display:inline}.hrow{grid-template-columns:44px 1fr 1fr auto;gap:6px;font-size:13px}.hrow input[type=time]{padding:7px 4px}}
+.vrow{display:grid;grid-template-columns:1fr 1fr 36px;gap:8px;align-items:end;margin-bottom:8px}.vrow label{display:grid;gap:4px;font-size:12.5px;font-weight:600;color:#5b5680}.vrow input{border:1px solid rgba(109,77,255,.18);border-radius:10px;padding:8px 10px;background:rgba(255,255,255,.75);min-width:0;font:inherit}
+.srow input{min-width:0;border:1px solid rgba(109,77,255,.18);border-radius:10px;padding:8px 10px;background:rgba(255,255,255,.75)}
 .sw{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px dashed rgba(109,77,255,.18);gap:12px}
 .sw:last-child{border:0}
 .tg{appearance:none;width:46px;height:27px;border-radius:99px;background:rgba(29,24,56,.15);position:relative;cursor:pointer;transition:.25s;flex:none}
@@ -265,30 +267,30 @@ function st(l,v,d){return '<div class="stat glass"><small>'+l+'</small><b>'+v+'<
 
 // ---------- ajustes ----------
 function renderAjustes(){var c=D.cfg;
- var hr=DNS.map(function(n,i){var h=c.horario[i];return '<div class="hrow"><span>'+n+'</span><input type="time" data-h="'+i+'" data-k="0" value="'+(h?h[0]:'09:00')+'"'+(h?'':' disabled')+'><input type="time" data-h="'+i+'" data-k="1" value="'+(h?h[1]:'14:00')+'"'+(h?'':' disabled')+'><label class="hint"><input type="checkbox" data-cl="'+i+'"'+(h?'':' checked')+'> cerrado</label></div>'}).join('');
+ var hr=DNS.map(function(n,i){var h=c.horario[i];return '<div class="hrow"><span><span class="dl">'+n+'</span><span class="ds">'+n.slice(0,3)+'</span></span><input type="time" data-h="'+i+'" data-k="0" value="'+(h?h[0]:'09:00')+'"'+(h?'':' disabled')+'><input type="time" data-h="'+i+'" data-k="1" value="'+(h?h[1]:'14:00')+'"'+(h?'':' disabled')+'><label class="hint"><input type="checkbox" data-cl="'+i+'"'+(h?'':' checked')+'> cerrado</label></div>'}).join('');
  var sv=c.servicios.map(function(s,i){return '<div class="srow"><input value="'+esc(s.n)+'" data-sn="'+i+'"><input type="number" min="15" step="15" value="'+s.m+'" data-sm="'+i+'"><button class="btn gh sm" data-sd="'+i+'">×</button></div>'}).join('');
- var vac=(c.vacaciones||[]).map(function(v,i){return '<div class="srow"><input type="date" value="'+v.desde+'" data-vd="'+i+'"><input type="date" value="'+(v.hasta||v.desde)+'" data-vh="'+i+'"><button class="btn gh sm" data-vx="'+i+'">×</button></div>'}).join('');
+ var vac=(c.vacaciones||[]).map(function(v,i){return '<div class="vrow"><label>Desde<input type="date" value="'+v.desde+'" data-vd="'+i+'"></label><label>Hasta<input type="date" value="'+(v.hasta||v.desde)+'" data-vh="'+i+'"></label><button class="btn gh sm" data-vx="'+i+'" aria-label="Quitar">×</button></div>'}).join('');
  function tg(k,t,d){return '<div class="sw"><div><b>'+t+'</b><div class="hint">'+d+'</div></div><input class="tg" type="checkbox" data-tg="'+k+'"'+(c[k]?' checked':'')+'></div>'}
  $('#aj').innerHTML='<div class="card glass"><h3>Horario de reservas</h3>'+hr+'<p class="hint">Las reservas de la web solo ofrecen horas dentro de este horario y libres en tu Google Calendar.</p></div>'+
- '<div class="card glass"><h3>Vacaciones y días cerrados</h3>'+(vac||'<p class="hint">Ninguno.</p>')+'<button class="btn lt sm" id="addV">+ Añadir fechas</button></div>'+
+ '<div class="card glass"><h3>Vacaciones y días cerrados</h3>'+(vac||'<p class="hint">Ninguno.</p>')+'<button class="btn lt sm" id="addV">+ Añadir fechas</button><p class="hint" style="margin-top:8px">Esos días la web no ofrece horas. Para un solo día, pon la misma fecha en las dos. Pulsa <b>Guardar ajustes</b> abajo.</p></div>'+
  '<div class="card glass"><h3>Servicios y duración (min)</h3>'+sv+'<button class="btn lt sm" id="addS">+ Añadir servicio</button></div>'+
- '<div class="card glass"><h3>Automatizaciones</h3>'+tg('recordatorio','Recordatorio de cita','El día antes, por email y con botón de WhatsApp en tu resumen.')+tg('pedirResena','Pedir reseña en Google','El día después de la cita.')+tg('volver','Te toca volver','Aviso a clientes que llevan tiempo sin venir.')+tg('resumenDiario','Resumen diario a las 9:00','Tus citas del día y los mensajes listos para enviar.')+
- '<label class="f" style="margin-top:10px"><span style="font-weight:600;font-size:14px">Avisar de volver tras (semanas)</span><input type="number" min="2" max="52" id="vs" value="'+(c.volverSemanas||7)+'"></label></div>'+
- '<div class="card glass f"><h3>Textos de los mensajes</h3><p class="hint">Puedes usar {propietario}, {mascota}, {fecha}, {hora}, {servicio}, {negocio}, {direccion}, {telefono}, {web}, {resenas}.</p><label>Recordatorio<textarea rows="3" id="t1">'+esc(c.txtRecordatorio)+'</textarea></label><label>Te toca volver<textarea rows="3" id="t2">'+esc(c.txtVolver)+'</textarea></label><label>Pedir reseña<textarea rows="3" id="t3">'+esc(c.txtResena)+'</textarea></label></div>'+
+ '<div class="card glass"><h3>Automatizaciones</h3>'+tg('recordatorio','Recordatorio de cita','El día antes, por email y con botón de WhatsApp en tu resumen.')+tg('pedirResena','Pedir reseña en Google','El día después de la cita.')+tg('resumenDiario','Resumen diario a las 9:00','Tus citas del día y los mensajes listos para enviar.')+'</div>'+
+ '<div class="card glass f"><h3>Textos de los mensajes</h3><p class="hint">Puedes usar {propietario}, {mascota}, {fecha}, {hora}, {servicio}, {negocio}, {direccion}, {telefono}, {web}, {resenas}.</p><label>Recordatorio<textarea rows="3" id="t1">'+esc(c.txtRecordatorio)+'</textarea></label><label>Pedir reseña<textarea rows="3" id="t3">'+esc(c.txtResena)+'</textarea></label></div>'+
  '<div class="row"><button class="btn" id="saveA">Guardar ajustes</button><button class="btn gh" id="probar">Probar automatizaciones ahora</button><a class="btn gh" target="_blank" href="'+D.sheetUrl+'">Ver hoja de datos</a></div>';
  $$('[data-cl]').forEach(function(x){x.onchange=function(){$$('[data-h="'+x.dataset.cl+'"]').forEach(function(t){t.disabled=x.checked})}});
- $('#addS').onclick=function(){c.servicios.push({n:'Nuevo servicio',m:60});collect();renderAjustes()};
- $('#addV').onclick=function(){c.vacaciones=c.vacaciones||[];c.vacaciones.push({desde:D.hoy,hasta:D.hoy});collect();renderAjustes()};
+ $('#addS').onclick=function(){collect();c.servicios.push({n:'Nuevo servicio',m:60});renderAjustes()};
+ $('#addV').onclick=function(){collect();c.vacaciones=c.vacaciones||[];c.vacaciones.push({desde:D.hoy,hasta:D.hoy});renderAjustes();var l=$$('[data-vd]');if(l.length)l[l.length-1].focus()};
  $$('[data-sd]').forEach(function(b){b.onclick=function(){collect();c.servicios.splice(+b.dataset.sd,1);renderAjustes()}});
+ $$('[data-vd]').forEach(function(x){x.onchange=function(){var h=$('[data-vh="'+x.dataset.vd+'"]');if(!h.value||h.value<x.value)h.value=x.value;h.min=x.value}});
  $$('[data-vx]').forEach(function(b){b.onclick=function(){collect();c.vacaciones.splice(+b.dataset.vx,1);renderAjustes()}});
  $('#saveA').onclick=function(){collect();this.disabled=true;run('panelGuardarAjustes',[c],function(n){D.cfg=n;toast('Ajustes guardados');renderAjustes()})};
- $('#probar').onclick=function(){if(!confirm('Se enviarán ahora los recordatorios, reseñas y avisos pendientes, y te llegará el resumen por email. ¿Continuar?'))return;run('panelProbarTarea',[],function(l){toast('Hecho: '+l.recordatorios+' recordatorios, '+l.resenas+' reseñas, '+l.volver+' avisos');load()})}}
+ $('#probar').onclick=function(){if(!confirm('Se enviarán ahora los recordatorios y peticiones de reseña pendientes, y te llegará el resumen por email. ¿Continuar?'))return;run('panelProbarTarea',[],function(l){toast('Hecho: '+l.recordatorios+' recordatorios, '+l.resenas+' reseñas');load()})}}
 function collect(){var c=D.cfg;
  c.horario=DNS.map(function(_,i){var cl=$('[data-cl="'+i+'"]');if(cl&&cl.checked)return null;var a=$('[data-h="'+i+'"][data-k="0"]'),b=$('[data-h="'+i+'"][data-k="1"]');return [a.value,b.value]});
  c.servicios=$$('[data-sn]').map(function(x){var i=x.dataset.sn;return {n:x.value.trim(),m:+$('[data-sm="'+i+'"]').value||60}}).filter(function(s){return s.n});
- c.vacaciones=$$('[data-vd]').map(function(x){var i=x.dataset.vd;return {desde:x.value,hasta:$('[data-vh="'+i+'"]').value||x.value}}).filter(function(v){return v.desde});
+ c.vacaciones=$$('[data-vd]').map(function(x){var i=x.dataset.vd;var h=$('[data-vh="'+i+'"]').value;return {desde:x.value,hasta:(h&&h>=x.value)?h:x.value}}).filter(function(v){return v.desde});
  $$('[data-tg]').forEach(function(t){c[t.dataset.tg]=t.checked});
- c.volverSemanas=+$('#vs').value||7;c.txtRecordatorio=$('#t1').value;c.txtVolver=$('#t2').value;c.txtResena=$('#t3').value}
+ c.txtRecordatorio=$('#t1').value;c.txtResena=$('#t3').value}
 
 // ---------- modal / tabs ----------
 function modal(h){$('#mb').innerHTML=h;$('#modal').classList.add('on');$$('[data-close]').forEach(function(b){b.onclick=closeM})}

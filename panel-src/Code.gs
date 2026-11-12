@@ -26,13 +26,10 @@ var DEFAULTS = {
     {n:'Desenredado de pelo largo (gato)', m:90},
     {n:'Cepillado y mantenimiento (gato)', m:60}
   ],
-  volverSemanas: 7,
   recordatorio: true,
-  volver: true,
   pedirResena: true,
   resumenDiario: true,
   txtRecordatorio: '¡Hola {propietario}! Te recordamos la cita de {mascota} mañana {fecha} a las {hora} ({servicio}) en {negocio}, {direccion}. Si no puedes venir, avísanos al {telefono}.',
-  txtVolver: '¡Hola {propietario}! Ya han pasado unas semanas desde la última visita de {mascota}. ¿Le damos un poco de brillo? Reserva cuando quieras: {web}',
   txtResena: '¡Gracias por traer a {mascota} a {negocio}! Si quedaste contento, nos ayudas muchísimo dejando una reseña en Google: {resenas}'
 };
 
@@ -251,7 +248,7 @@ function panelBorrarCanceladas() {
   for (var i = v.length - 1; i >= 1; i--) if (v[i][col] === 'cancelada') { sh.deleteRow(i + 1); n++; }
   return n;
 }
-function panelGuardarAjustes(c) { soloPropietario(); var cur = cfg(); Object.keys(c).forEach(function(k){ cur[k] = c[k]; }); saveCfg(cur); return cur; }
+function panelGuardarAjustes(c) { soloPropietario(); (c.vacaciones || []).forEach(function(v){ if (!v.hasta || v.hasta < v.desde) v.hasta = v.desde; }); var cur = cfg(); Object.keys(c).forEach(function(k){ cur[k] = c[k]; }); saveCfg(cur); return cur; }
 function panelProbarTarea() { soloPropietario(); return tareaDiaria(); }
 
 // ============ TAREA DIARIA (9:00) ============
@@ -260,7 +257,7 @@ function tareaDiaria() {
   var man = new Date(); man.setDate(man.getDate() + 1); var manana = fmt(man, 'yyyy-MM-dd');
   var ay = new Date(); ay.setDate(ay.getDate() - 1); var ayer = fmt(ay, 'yyyy-MM-dd');
   var citas = readAll('Citas', CITA_COLS), clientes = readAll('Clientes', CLI_COLS);
-  var log = { recordatorios: 0, resenas: 0, volver: 0, whatsapp: [] };
+  var log = { recordatorios: 0, resenas: 0, whatsapp: [] };
   var base = { negocio: c.negocio, direccion: c.direccion, telefono: c.telefono, web: c.web, resenas: c.resenas };
 
   // Las citas pasadas que siguen "reservada" se dan por hechas
@@ -284,19 +281,6 @@ function tareaDiaria() {
       ci.resena = hoy; writeRow('Citas', CITA_COLS, ci);
     }
   });
-
-  if (c.volver) {
-    var limite = new Date(); limite.setDate(limite.getDate() - 7 * (c.volverSemanas || 7)); var lim = fmt(limite, 'yyyy-MM-dd');
-    var futuras = {}; citas.forEach(function(ci){ if (ci.fecha >= hoy && ci.estado === 'reservada') futuras[ci.clienteId] = 1; });
-    clientes.forEach(function(cl){
-      if (cl.ultimaVisita && cl.ultimaVisita <= lim && !cl.avisoVolver && !futuras[cl.id]) {
-        var tv = fill(c.txtVolver, Object.assign({}, base, cl));
-        if (cl.email) { try { MailApp.sendEmail(cl.email, '¿Le damos un poco de brillo a ' + cl.mascota + '? · ' + c.negocio, tv, { name: c.negocio }); log.volver++; } catch (e) {} }
-        log.whatsapp.push({ tipo: 'Te toca volver', quien: cl.propietario + ' (' + cl.mascota + ')', tel: cl.telefono, txt: tv });
-        cl.avisoVolver = hoy; writeRow('Clientes', CLI_COLS, cl);
-      }
-    });
-  }
 
   if (c.resumenDiario) {
     var hoyCitas = citas.filter(function(ci){ return ci.fecha === hoy && ci.estado === 'reservada'; }).sort(function(a, b){ return a.hora < b.hora ? -1 : 1; });
