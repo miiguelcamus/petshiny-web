@@ -305,3 +305,52 @@ fieldset{border:0}legend{font-weight:600;margin-bottom:10px;font-size:15.5px}
 }
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}}
 .ring svg{width:100%;height:100%;overflow:visible}
+/* ---- v2: foto real, reseñas, la peluquería, FAQ ---- */
+.blob.pb{overflow:hidden;inset:6%;background:var(--vio);box-shadow:0 40px 80px -40px rgba(58,36,170,.6),0 0 0 10px #fff,0 0 0 12px var(--vio2)}
+.blob.pb img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;transform:scale(1.12);animation:unmorph 12s ease-in-out infinite}
+@keyframes unmorph{50%{transform:scale(1.12) rotate(-8deg)}}
+.hv .bubble,.hv .ring{z-index:2}
+a.rate{color:var(--mut);width:max-content;max-width:100%;padding:8px 14px 8px 8px;margin-left:-8px;border-radius:14px;transition:background .25s}
+a.rate:hover{background:#fff}
+.shl{color:var(--mut);margin-top:12px;font-size:17px}
+.shl a{color:var(--vio);font-weight:600}
+.revs{display:block;columns:3 300px;column-gap:20px}
+.rev{break-inside:avoid;margin:0 0 20px;display:block;box-shadow:0 14px 34px -28px rgba(30,27,58,.5)}
+.rev.big{transform:none}
+.rh{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.rh b{display:block;font-size:16px}
+.rh small{display:block;font-size:13px;color:var(--mut)}
+.rev.big .rh small{color:#b9b4d6}
+.av{flex:none;width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font:700 18px "Bricolage Grotesque";background:var(--vio2);color:var(--vio)}
+.rev.big .av{background:var(--sun);color:var(--ink)}
+.stars .off{display:inline-flex;gap:2px;color:#d9d3e8;font-style:normal}
+.rev figcaption{display:flex;align-items:center;gap:6px}
+.rev figcaption::before{content:"";width:14px;height:14px;border-radius:50%;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0)}
+.rl{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:center}
+.ab{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:center}
+.abp{position:relative;margin:0;border-radius:32px;overflow:hidden;aspect-ratio:4/4.6;box-shadow:0 40px 80px -50px rgba(30,27,58,.7)}
+.abp img{width:100%;height:100%;object-fit:cover;object-position:50% 85%}
+.abp figcaption{position:absolute;left:16px;bottom:16px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);padding:10px 16px 10px 12px;border-radius:14px;font-weight:600;font-size:14.5px}
+.abp figcaption svg{width:18px;height:18px;color:var(--vio)}
+.abt>p{color:var(--ink2);font-size:17.5px;margin-top:18px}
+.oq{margin:26px 0;padding:22px 26px;border-left:4px solid var(--sun);background:var(--sun2);border-radius:0 18px 18px 0;font:500 21px/1.35 "Bricolage Grotesque"}
+.oq cite{display:block;margin-top:10px;font:500 13.5px "DM Sans";color:var(--mut);font-style:normal}
+.ticks{list-style:none;padding:0;display:grid;gap:12px}
+.ticks li{display:flex;gap:12px;align-items:flex-start;font-weight:500}
+.ticks svg{flex:none;width:22px;height:22px;padding:4px;border-radius:50%;background:var(--vio);color:#fff;margin-top:1px}
+.fq{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start}
+.faq{display:grid;gap:12px}
+.faq details{background:#fff;border:1px solid var(--line);border-radius:18px;transition:box-shadow .3s}
+.faq details[open]{box-shadow:0 18px 40px -30px rgba(30,27,58,.55)}
+.faq summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:20px 24px;font:700 18.5px "Bricolage Grotesque"}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary i{flex:none;position:relative;width:30px;height:30px;border-radius:50%;background:var(--vio2)}
+.faq summary i::before,.faq summary i::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2px;margin:-1px 0 0 -6px;background:var(--vio);border-radius:2px;transition:transform .3s var(--ease)}
+.faq summary i::after{transform:rotate(90deg)}
+.faq details[open] summary i::after{transform:rotate(0)}
+.faq details p{padding:0 24px 22px;color:var(--ink2)}
+.faq details a{color:var(--vio);font-weight:600}
+.faq summary:focus-visible{outline:2px solid var(--vio);outline-offset:2px;border-radius:18px}
+@media(max-width:1000px){.ab,.fq{grid-template-columns:1fr;gap:36px}.abp{max-width:520px;aspect-ratio:4/3.6}}
+@media(max-width:640px){.revs{columns:1}.oq{font-size:18.5px;padding:18px 20px}.faq summary{font-size:17px;padding:18px}.faq details p{padding:0 18px 18px}.blob.pb{box-shadow:0 30px 60px -36px rgba(58,36,170,.6),0 0 0 7px #fff,0 0 0 9px var(--vio2)}}
+@media(prefers-reduced-motion:reduce){.blob.pb img{animation:none}}
